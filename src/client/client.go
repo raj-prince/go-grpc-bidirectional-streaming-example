@@ -5,10 +5,9 @@ import (
 	"io"
 	"log"
 	"math/rand"
+	"time"
 
 	pb "github.com/pahanini/go-grpc-bidirectional-streaming-example/src/proto"
-
-	"time"
 
 	"google.golang.org/grpc"
 )
@@ -24,13 +23,21 @@ func main() {
 
 	// create stream
 	client := pb.NewMathClient(conn)
-	stream, err := client.Max(context.Background())
+	streamContext, _ := context.WithTimeout(context.Background(), time.Second)
+	stream, err := client.Max(streamContext)
 	if err != nil {
 		log.Fatalf("openn stream error %v", err)
 	}
 
 	var max int32
 	ctx := stream.Context()
+
+	deadline, ok := ctx.Deadline()
+	if ok {
+		log.Println("Deadline set: ", deadline)
+	} else {
+		log.Println("Deadline not set")
+	}
 	done := make(chan bool)
 
 	// first goroutine sends random increasing numbers to stream
