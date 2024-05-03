@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"time"
 
 	pb "github.com/pahanini/go-grpc-bidirectional-streaming-example/src/proto"
 
@@ -21,6 +22,7 @@ func (s server) Max(srv pb.Math_MaxServer) error {
 	ctx := srv.Context()
 
 	for {
+		time.Sleep(time.Second * 2)
 
 		// exit if context is done
 		// or continue
